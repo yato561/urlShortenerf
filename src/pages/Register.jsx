@@ -50,9 +50,13 @@ export default function Register() {
     };
 
     return(
-        <div className="flex items-center justify-center h-screen">
-            <div className="bg-darkCard p-10 rounded-xl w-96 shadow-lg">
-                <h1 className="text-2xl mb-6 font-semibold text-center">Create Account</h1>
+        <div className="flex items-center justify-center h-screen bg-darkBg">
+            <div className="bg-darkCard p-10 rounded-xl w-96 shadow-lg border border-gray-700">
+                <div className="flex items-center justify-center gap-2 mb-8">
+                    <div className="w-8 h-8 bg-gradient-to-br from-primary to-green-500 rounded-full"></div>
+                    <h1 className="text-2xl font-bold text-primary">URLShortener</h1>
+                </div>
+                <h2 className="text-lg mb-6 font-semibold text-center text-gray-300">Create your account</h2>
 
                 {error && (
                     <div className="bg-red-900 p-3 rounded mb-4 text-red-200 text-sm">
@@ -87,7 +91,7 @@ export default function Register() {
                 </Button>
 
                 <p className="text-gray-400 text-sm mt-4 text-center">
-                    Already have an account? <Link to="/login" className="text-primary">Login</Link>
+                    Already have an account? <Link to="/login" className="text-primary hover:text-green-400">Login</Link>
                 </p>
             </div>
         </div>

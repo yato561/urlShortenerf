@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
 import UrlCard from "../components/UrlCard";
 import { get, del, post } from "../api/api";
 
@@ -42,7 +40,11 @@ export default function MyUrls() {
       );
       if (newExpiry === null) return;
 
-      await post(`/urls/update/${url.id}`, { expiry: newExpiry || null });
+      // Always send both longUrl and expiry to backend
+      await post(`/urls/update/${url.id}`, { 
+        longUrl: url.longUrl,
+        expiry: newExpiry || null 
+      });
       await loadUrls();
     } catch (err) {
       setError("Failed to update URL");
@@ -55,43 +57,35 @@ export default function MyUrls() {
   }, []);
 
   return (
-    <div className="flex bg-darkBg min-h-screen">
-      <Sidebar />
+    <div className="w-full p-4 lg:p-10">
+      <h1 className="text-2xl lg:text-3xl font-bold mb-6">My URLs</h1>
 
-      <div className="flex-1 ml-64 flex flex-col">
-        <Navbar />
+      {error && (
+        <div className="bg-red-900 bg-opacity-20 border border-red-600 p-3 rounded mb-4 text-red-400 text-sm">
+          {error}
+        </div>
+      )}
 
-        <main className="p-10 text-white">
-          <h1 className="text-3xl font-bold mb-6">My URLs</h1>
+      {loading && (
+        <p className="text-gray-400 text-sm">Loading...</p>
+      )}
 
-          {error && (
-            <div className="bg-red-900 bg-opacity-20 border border-red-600 p-3 rounded mb-4 text-red-400">
-              {error}
-            </div>
-          )}
+      {!loading && urls.length === 0 && (
+        <p className="text-gray-400 text-sm">No URLs yet. Create one to get started!</p>
+      )}
 
-          {loading && (
-            <p className="text-gray-400">Loading...</p>
-          )}
-
-          {!loading && urls.length === 0 && (
-            <p className="text-gray-400">No URLs yet. Create one to get started!</p>
-          )}
-
-          {!loading && urls.length > 0 && (
-            <div className="grid gap-4">
-              {urls.map(url => (
-                <UrlCard
-                  key={url.id}
-                  url={url}
-                  onDelete={deleteUrl}
-                  onEdit={editUrl}
-                />
-              ))}
-            </div>
-          )}
-        </main>
-      </div>
+      {!loading && urls.length > 0 && (
+        <div className="grid gap-3 lg:gap-4">
+          {urls.map(url => (
+            <UrlCard
+              key={url.id}
+              url={url}
+              onDelete={deleteUrl}
+              onEdit={editUrl}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
