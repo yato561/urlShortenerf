@@ -31,7 +31,7 @@ export default function Analytics() {
     const fetchUrls = async () => {
         try {
             console.log("📊 Fetching URLs for analytics...");
-            const res = await api.get("/api/urls/my");
+            const res = await api.get("/urls/all");
             const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
             setUrls(data);
             console.log("✓ URLs fetched:", data.length);

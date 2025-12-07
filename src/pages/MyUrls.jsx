@@ -13,7 +13,7 @@ export default function MyUrls() {
     try {
       setLoading(true);
       setError(null);
-      const data = await get("/api/urls/my");
+      const data = await get("/urls/all");
       setUrls(Array.isArray(data) ? data : data.data || []);
     } catch (err) {
       setError("Failed to load URLs");
@@ -26,7 +26,7 @@ export default function MyUrls() {
   const deleteUrl = async (id) => {
     try {
       if (!globalThis.confirm("Delete this URL?")) return;
-      await del(`/api/urls/${id}`);
+      await del(`/urls/delete/${id}`);
       await loadUrls();
     } catch (err) {
       setError("Failed to delete URL");
@@ -42,7 +42,7 @@ export default function MyUrls() {
       );
       if (newExpiry === null) return;
 
-      await post(`/api/urls/${url.id}`, { expiry: newExpiry || null });
+      await post(`/urls/update/${url.id}`, { expiry: newExpiry || null });
       await loadUrls();
     } catch (err) {
       setError("Failed to update URL");

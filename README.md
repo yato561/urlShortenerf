@@ -114,10 +114,10 @@ The application connects to a backend API with the following endpoints:
 - `POST /auth/login` - Login and receive JWT token
 
 ### URL Management
-- `POST /api/urls/shorten` - Create a new shortened URL
-- `GET /api/urls/my` - Get all user's URLs
-- `DELETE /api/urls/{id}` - Delete a URL
-- `POST /api/urls/{id}` - Update a URL (expiry, etc.)
+- `POST /urls/create` - Create a new shortened URL
+- `GET /urls/all` - Get all user's URLs
+- `DELETE /urls/delete/{id}` - Delete a URL
+- `POST /urls/update/{id}` - Update a URL (expiry, etc.)
 
 ### Requirements
 - Backend server running on `http://localhost:8081`

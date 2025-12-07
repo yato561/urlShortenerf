@@ -18,7 +18,7 @@ export default function Dashboard() {
     const fetchUrls = async () => {
         try {
             setError(null);
-            const res = await api.get("/api/urls/my");
+            const res = await api.get("/urls/all");
             setUrls(Array.isArray(res) ? res : res.data || []);
         } catch (err) {
             setError("Failed to load URLs");
@@ -36,7 +36,7 @@ export default function Dashboard() {
         try {
             setLoading(true);
             setError(null);
-            await api.post("/api/urls/shorten", { 
+            await api.post("/urls/create", { 
                 longUrl, 
                 expiry: expiry || null 
             });
