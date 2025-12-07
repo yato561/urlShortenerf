@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------- GLOBAL STYLES ------------- */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+  background-color: #000;
+}
+
+/* Remove scrollbar (Figma-like clean view) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Card background (reusable) */
+.bg-darkCard {
+  background-color: #111216;
+}
+
+/* Primary Color (Neon Spotify Green) */
+.text-primary {
+  color: #1db954;
+}
+.bg-primary {
+  background-color: #1db954;
+}
+.border-primary {
+  border-color: #1db954;
+}
+
+/* Inputs */
+.input-field {
+  @apply w-full p-3 rounded-md bg-[#1a1a1a] text-white border border-gray-700 focus:border-primary focus:outline-none transition;
+}
+
+/* Buttons */
+.btn-primary {
+  @apply px-4 py-2 rounded-md bg-primary text-black font-semibold hover:opacity-80 transition;
+}
