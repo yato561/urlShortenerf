@@ -15,12 +15,12 @@ export default function Sidebar() {
     ];
 
     return (
-        <div className="w-64 bg-darkCard h-screen p-6 border-r border-gray-800 fixed left-0 top-0">
+        <div className="w-64 bg-darkCard h-screen p-6 border-r border-gray-800 fixed left-0 top-0 overflow-y-auto">
             {/* Logo */}
             <div className="mb-8">
                 <div className="text-primary text-2xl font-bold flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary to-green-500 rounded-full"></div>
-                    Dashboard
+                    <div className="w-8 h-8 bg-gradient-to-br from-primary to-green-500 rounded-full flex-shrink-0"></div>
+                    <span className="truncate">Dashboard</span>
                 </div>
             </div>
 
@@ -34,14 +34,14 @@ export default function Sidebar() {
                         <Link
                             key={item.path}
                             to={item.path}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all whitespace-nowrap ${
                                 active
                                     ? "bg-primary bg-opacity-20 text-primary border-l-4 border-primary"
                                     : "text-gray-300 hover:text-primary hover:bg-gray-800"
                             }`}
                         >
-                            <Icon size={20} />
-                            <span>{item.label}</span>
+                            <Icon size={20} className="flex-shrink-0" />
+                            <span className="text-sm font-medium">{item.label}</span>
                         </Link>
                     );
                 })}

@@ -35,7 +35,13 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error("Response error:", error.response?.status, error.response?.data);
+    if (error.message === "Network Error") {
+      console.error("❌ CORS Error - Backend not responding or CORS not configured");
+      console.error("   Make sure backend is running on http://localhost:8081");
+      console.error("   Backend must allow CORS for http://localhost:5174");
+    } else {
+      console.error("Response error:", error.response?.status, error.response?.data);
+    }
     return Promise.reject(error);
   }
 );

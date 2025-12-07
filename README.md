@@ -246,9 +246,18 @@ colors: {
 
 ## Troubleshooting
 
+### CORS (Cross-Origin) Error
+**Error:** `Access to XMLHttpRequest at 'http://localhost:8081/auth/register' from origin 'http://localhost:5174' has been blocked by CORS policy`
+
+**Solution:** Your backend needs CORS configuration. See [`CORS_SETUP.md`](./CORS_SETUP.md) for detailed backend setup instructions for:
+- Spring Boot
+- Node.js/Express
+- Python/Flask
+- Other frameworks
+
 ### API Connection Issues
 1. Verify backend is running on `http://localhost:8081`
-2. Check CORS configuration in backend
+2. Check CORS configuration in backend (see CORS_SETUP.md)
 3. Open DevTools → Network tab to inspect requests
 4. Check browser Console for error messages
 

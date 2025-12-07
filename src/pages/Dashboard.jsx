@@ -10,6 +10,7 @@ export default function Dashboard() {
     const [longUrl, setLongUrl] = useState("");
     const [expiry, setExpiry] = useState("");
     const [urls, setUrls] = useState([]);
+    const [createdUrl, setCreatedUrl] = useState(null);
     const [analytics, setAnalytics] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -36,10 +37,12 @@ export default function Dashboard() {
         try {
             setLoading(true);
             setError(null);
-            await api.post("/urls/create", { 
+            const res = await api.post("/urls/create", { 
                 longUrl, 
                 expiry: expiry || null 
             });
+            // Store the created URL
+            setCreatedUrl(res.data);
             setLongUrl("");
             setExpiry("");
             await fetchUrls();
@@ -109,6 +112,29 @@ export default function Dashboard() {
                             {loading ? "Generating..." : "Generate"}
                         </Button>
                     </div>
+
+                    {/* Created URL Result */}
+                    {createdUrl && (
+                        <div className="mt-6 p-6 bg-green-900 bg-opacity-20 border border-green-600 rounded-lg">
+                            <p className="text-green-400 font-semibold mb-3">✓ Short URL Created!</p>
+                            <div className="space-y-3">
+                                <div>
+                                    <p className="text-gray-400 text-sm">Original URL:</p>
+                                    <p className="text-white break-all">{createdUrl.longUrl || longUrl}</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-400 text-sm">Short Code:</p>
+                                    <p className="text-primary font-mono font-bold text-lg">{createdUrl.shortCode}</p>
+                                </div>
+                                {createdUrl.expiry && (
+                                    <div>
+                                        <p className="text-gray-400 text-sm">Expires:</p>
+                                        <p className="text-yellow-400">{new Date(createdUrl.expiry).toLocaleDateString()}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* URLs List */}
                     <h2 className="mt-10 mb-4 text-xl font-semibold">My URLs</h2>
