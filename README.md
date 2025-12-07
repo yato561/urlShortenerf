@@ -6,11 +6,12 @@ A modern web application that allows users to create, manage, and track shortene
 
 ✅ **User Authentication** - Secure registration and login with JWT tokens
 ✅ **URL Shortening** - Convert long URLs into short, memorable links
-✅ **URL Management** - View, edit, and delete your shortened URLs
+✅ **URL Management** - View, edit, and delete your shortened URLs with copy-to-clipboard
 ✅ **Analytics** - Track click counts and URL performance
 ✅ **Expiry Management** - Set optional expiration dates for URLs
-✅ **Dashboard** - Centralized view of all your shortened URLs
+✅ **Dashboard** - Centralized view with URL creation and management
 ✅ **Protected Routes** - Secure pages that require authentication
+✅ **Icon Navigation** - Modern sidebar with intuitive icons for easy navigation
 
 ## Tech Stack
 
@@ -21,6 +22,8 @@ A modern web application that allows users to create, manage, and track shortene
 - **Routing:** React Router
 - **State Management:** React Context API
 - **Charts:** Recharts
+- **Icons:** React Icons (Feather)
+- **Linting:** ESLint
 
 ## Project Structure
 
@@ -149,6 +152,76 @@ colors: {
 }
 ```
 
+## Page & Component Guide
+
+### Pages
+
+#### Dashboard.jsx
+- **Purpose:** Primary hub for creating shortened URLs
+- **Features:**
+  - URL creation form with long URL input
+  - Optional expiry date selection
+  - Display of analytics overview chart
+  - URL list in table format (when fetched)
+
+#### MyUrls.jsx
+- **Purpose:** View and manage all your created URLs
+- **Features:**
+  - Grid view of all user URLs
+  - Quick copy-to-clipboard functionality
+  - Edit URL expiry dates
+  - Delete URLs with confirmation
+  - Click count display
+  - Expiry date display (if set)
+
+#### Analytics.jsx
+- **Purpose:** Track and analyze URL performance
+- **Features:**
+  - Total clicks counter
+  - Click trends over time (line chart)
+  - Device breakdown (desktop, mobile, tablet)
+  - Referrer source analysis
+  - Individual URL click breakdown
+
+#### Login.jsx & Register.jsx
+- **Purpose:** User authentication
+- **Features:**
+  - Form validation
+  - Error messages
+  - Loading states
+  - JWT token management
+
+#### Settings.jsx
+- **Purpose:** User account settings (placeholder)
+
+### Components
+
+#### UrlCard.jsx
+- **Props:** `url` (object), `onDelete` (function), `onEdit` (function)
+- **Features:**
+  - Displays short code, long URL, click count
+  - **Copy Button** - Copies short URL to clipboard with visual feedback
+  - **Edit Button** - Opens prompt to modify expiry date
+  - **Delete Button** - Deletes URL with confirmation
+  - Shows expiry date if set
+  - Icons from react-icons/fi (Feather)
+
+#### Navbar.jsx & Sidebar.jsx
+- **Purpose:** Navigation components
+- **Features:**
+  - Fixed sidebar with icon-based navigation
+  - Active route highlighting
+  - Logout functionality
+  - Responsive layout with ml-64 offset for fixed sidebar
+
+#### AnalyticsChart.jsx
+- **Purpose:** Displays click trends
+- **Features:**
+  - Line chart for daily click data
+  - Responsive design
+
+## Configuration
+
 ## Development Guidelines
 
 ### Components
@@ -209,8 +282,11 @@ Key dependencies used in this project:
 - `axios` - HTTP client
 - `tailwindcss` - CSS framework
 - `recharts` - Charting library
+- `react-icons` - Icon library
 - `postcss` - CSS processing
 - `autoprefixer` - CSS vendor prefixes
+- `prop-types` - Runtime type checking for props
+- `eslint` - Code linting
 
 ## Security Notes
 
