@@ -333,39 +333,106 @@ useEffect(() => {
 ### 3. **Analystics.jsx** - Full Analytics Dashboard
 
 **Path:** `/src/pages/Analystics.jsx`  
-**Route:** `/analytics` (Protected)
+**Route:** `/analytics` (Protected)  
+**Last Updated:** December 14, 2025
 
 #### Purpose
-Comprehensive analytics dashboard showing detailed URL performance metrics.
+Comprehensive real-time analytics dashboard showing detailed URL performance metrics with device and referrer tracking.
 
 #### State Management
 
 ```javascript
-const [analytics, setAnalytics] = useState([]);     // Daily click data
-const [urls, setUrls] = useState([]);               // URLs for breakdown
-const [loading, setLoading] = useState(true);       // Loading state
-const [error, setError] = useState(null);           // Error messages
-const [topDevices] = useState([...]);               // Mock device data
-const [topReferrers] = useState([...]);             // Mock referrer data
+const [analytics, setAnalytics] = useState([]);       // Daily clicks per day
+const [urls, setUrls] = useState([]);                 // All URLs with click counts
+const [topDevices, setTopDevices] = useState([]);     // Device distribution (Desktop, Mobile, Tablet, Other)
+const [topReferrers, setTopReferrers] = useState([]); // Top referrer sources with percentages
+const [summary, setSummary] = useState(null);         // Summary: totalClicks, totalUrls, topUrl
+const [loading, setLoading] = useState(true);         // Loading state
+const [error, setError] = useState(null);             // Error message from API
+```
+
+#### Device Color Mapping
+
+```javascript
+const deviceColors = {
+    Desktop: "#1DB954",   // Green (primary color)
+    Mobile: "#FF6B6B",    // Red
+    Tablet: "#4ECDC4",    // Cyan
+    Other: "#95E1D3"      // Light cyan
+};
 ```
 
 #### Methods & Functions
 
-**`fetchUrls()` - Async Function**
-- **Purpose:** Fetch all URLs for analytics
-- **Endpoint:** `GET /urls/all`
-- **Returns:** Array of URL objects with clickCount
-
 **`fetchAnalytics()` - Async Function**
-- **Purpose:** Fetch or generate analytics data
-- **Endpoint:** `GET /analytics` (currently mocked)
-- **Logic:** Generates mock daily click data across 7 days
-- **Returns:** Array of daily click objects:
+- **Purpose:** Fetch real-time analytics from backend
+- **Endpoint:** `GET /analytics/overview`
+- **Backend Response Format:**
+  ```javascript
+  {
+    totalClicks: number,
+    totalUrls: number,
+    topUrl: { shortCode: string, clickCount: number },
+    clicksPerDay: [{ date: string, clicks: number }, ...],
+    devices: [
+      [deviceName: string, count: number],     // Array format: [["Desktop", 10], ["Mobile", 5], ...]
+      [deviceName: string, count: number],
+      ...
+    ],
+    referrers: [
+      { name: string, percentage: number },    // Object format: [{name: "google.com", percentage: 45}, ...]
+      { name: string, percentage: number },
+      ...
+    ],
+    breakdown: [{ shortCode: string, clickCount: number }, ...]
+  }
+  ```
+
+**Data Transformation Logic:**
+
+*Device Data Processing:*
+```javascript
+// Transforms device array format [[name, count], ...] to Recharts format
+setTopDevices(
+    (data.devices || []).map((d, idx) => {
+        const [deviceName, count] = Array.isArray(d) ? d : [d, 0];
+        return {
+            id: `device-${deviceName}-${idx}`,  // Composite key (data + index)
+            name: deviceName,
+            value: count,
+            color: deviceColors[deviceName] || "#1DB954"
+        };
+    })
+);
+```
+
+*Referrer Data Processing:*
+```javascript
+// Transforms referrer objects to include composite keys for React rendering
+setTopReferrers(
+    (data.referrers || []).map((r, idx) => ({
+        id: r.name ? `referrer-${r.name}-${idx}` : `referrer-unknown-${idx}`,  // Composite key
+        name: r.name || "Unknown",
+        percentage: r.percentage || 0
+    }))
+);
+```
+
+**Key Features:**
+- ✅ **Composite Key Generation:** Combines data value + index to ensure unique React keys
+- ✅ **Data Format Handling:** Supports both array and object backends formats
+- ✅ **Fallback Values:** Uses "Unknown" for null/undefined referrers
+- ✅ **Color Mapping:** Assigns consistent colors to device types
+- ✅ **Error Handling:** Catches API errors and displays error messages
+
+**`fetchUrls()` - Async Function**
+- **Purpose:** Fetch all URLs for breakdown section
+- **Endpoint:** `GET /urls/all`
+- **Returns:** Array of URL objects:
   ```javascript
   [
-      { date: "Jan 1", clicks: 3 },
-      { date: "Jan 2", clicks: 7 },
-      ...
+    { id: number, shortCode: string, longUrl: string, clickCount: number },
+    ...
   ]
   ```
 
@@ -374,60 +441,147 @@ const [topReferrers] = useState([...]);             // Mock referrer data
 useEffect(() => {
     const loadData = async () => {
         setLoading(true);
-        await Promise.all([fetchUrls(), fetchAnalytics()]);
+        await Promise.all([fetchAnalytics(), fetchUrls()]);
         setLoading(false);
     };
     loadData();
 }, []);
 ```
 
-**Computed Values**
-
-```javascript
-// Total clicks across all URLs
-const totalClicks = urls.reduce((sum, u) => sum + (u.clickCount || 0), 0);
-
-// URL with highest clicks
-const topUrl = urls.length
-    ? urls.reduce((best, u) => 
-        ((u.clickCount || 0) > (best.clickCount || 0) ? u : best), 
-        urls[0])
-    : null;
-```
-
 #### Display Sections
 
-1. **Stats Summary**
-   - Total Clicks: Sum of all clicks
-   - Total URLs: Count of created URLs
-   - Top Performing URL: URL with most clicks
+1. **Summary Cards** (3-column grid on desktop, 1-column mobile)
+   - **Total Clicks:** Sum of all clicks across all URLs
+   - **Total URLs:** Count of created URLs
+   - **Top Performing URL:** URL with highest click count
+     - Displays shortCode and click count
 
-2. **Clicks per Day**
-   - Line chart showing daily trends
-   - 7-day analytics window
+2. **Clicks per Day Chart** (Line chart)
+   - Shows daily click trends
+   - Uses AnalyticsChart component
+   - Responsive height (300px)
 
-3. **Top Devices**
-   - Donut pie chart showing device distribution
-   - Desktop, Mobile, Tablet, Other
+3. **Top Devices** (Responsive grid)
+   - **Left:** Donut pie chart (Recharts)
+     - Inner radius: 50px
+     - Outer radius: 70px
+     - Fixed size: 200x200px
+   - **Right:** Legend with device names, colors, and counts
+   - Device types: Desktop, Mobile, Tablet, Other
 
-4. **Top Referrers**
-   - Horizontal bar chart with referrer sources
-   - Percentage breakdown
+4. **Top Referrers** (Horizontal bars)
+   - Shows referrer sources and visit percentages
+   - Gradient bar (green primary color)
+   - Shows referrer name and percentage value
 
-5. **URL Click Breakdown**
+5. **URL Click Breakdown** (Card grid)
    - Individual URL performance cards
-   - Shows shortCode, longUrl, clickCount
+   - Shows: longUrl (truncated), shortCode, clickCount
+   - Hover effect: border highlights primary color
+   - Empty state: "No URLs created yet"
 
 #### Components Used
-- **AnalyticsChart** - LineChart for daily clicks
-- **PieChart** (Recharts) - Device distribution
-- **Responsive bars** - Referrer percentages
+- **AnalyticsChart** - LineChart component for daily clicks
+- **PieChart** (Recharts) - Device distribution visualization
+- **Cell** (Recharts) - Individual pie segments with colors
+- **ResponsiveContainer** (Recharts) - Chart wrapper with responsive sizing
+
+#### Styling Details
+
+**Summary Cards:**
+```javascript
+// Grid layout
+className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"
+
+// Individual card
+className="bg-darkCard p-6 rounded-lg shadow-lg border border-gray-700"
+
+// Value display
+className="text-4xl font-bold text-primary"
+```
+
+**Chart Container:**
+```javascript
+// Fixed pixel dimensions for Recharts ResponsiveContainer
+style={{ width: 200, height: 200 }}
+<ResponsiveContainer width={200} height={200}>
+```
+
+**Referrer Bars:**
+```javascript
+// Progress bar styling
+className="w-full h-2 bg-gray-800 rounded-full overflow-hidden"
+
+// Filled portion with gradient
+className="h-full bg-gradient-to-r from-primary to-green-500"
+style={{ width: `${ref.percentage}%` }}
+```
+
+**URL Breakdown Cards:**
+```javascript
+// Card styling with hover effect
+className="bg-darkCard p-4 rounded-lg border border-gray-700 hover:border-primary transition"
+
+// Short code styling
+className="text-primary font-mono font-medium"
+```
+
+#### React Key Props Optimization
+
+**Problem Solved:**
+- Original issue: Duplicate key warnings when data contained multiple items with same value
+- Solution: Implemented composite unique keys combining data + index
+
+**Implementation:**
+```javascript
+// Device keys
+key={entry.id}  // e.g., "device-Desktop-0", "device-Mobile-1"
+
+// Referrer keys
+key={ref.id}    // e.g., "referrer-google-0", "referrer-unknown-1"
+
+// URL breakdown keys
+key={u.id}      // Uses backend-provided ID (already unique)
+```
 
 #### API Endpoints
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | `/urls/all` | Fetch URLs for analytics |
-| GET | `/analytics` | Fetch analytics data |
+| Method | Endpoint | Purpose | Response |
+|--------|----------|---------|----------|
+| GET | `/analytics/overview` | Fetch analytics summary, devices, referrers, daily clicks | See Backend Response Format above |
+| GET | `/urls/all` | Fetch all URLs for breakdown section | Array of URL objects |
+
+#### Error Handling
+
+```javascript
+// API Error catch
+try {
+    const res = await api.get("/analytics/overview");
+    // ... process data
+} catch (err) {
+    console.error("❌ Error loading analytics:", err);
+    setError("Failed to load analytics");
+}
+
+// Display error message
+{error && (
+    <div className="bg-red-900 bg-opacity-20 border border-red-600 p-3 rounded mb-4 text-red-400 text-sm">
+        {error}
+    </div>
+)}
+```
+
+#### Empty States
+
+1. **No analytics data:** Shows loading spinner
+2. **No URLs created:** Shows message "No URLs created yet. Create one to see analytics!"
+3. **API error:** Shows error message in red banner
+
+#### Performance Considerations
+
+- ✅ **Parallel loading:** Uses `Promise.all()` to fetch analytics and URLs simultaneously
+- ✅ **Efficient rendering:** Only renders data sections if data exists
+- ✅ **Optimized keys:** Composite keys prevent unnecessary re-renders
+- ✅ **Fixed chart dimensions:** Avoids Recharts sizing issues
 
 ---
 

@@ -74,13 +74,24 @@ export default function Dashboard() {
         }
     };
 
-    // Analytics (Temporary static until backend supports analytics)
+    // Analytics (Fetch real-time data from backend)
     useEffect(() => {
-        setAnalytics([
-            { date: "2025-01-01", clicks: 3 },
-            { date: "2025-01-02", clicks: 7 },
-            { date: "2025-01-03", clicks: 2 }
-        ]);
+        const fetchAnalytics = async () => {
+            try {
+                const res = await api.get("/analytics/overview");
+                const data = res.data;
+                console.log("📊 Analytics response:", data);
+                
+                // Backend returns 'dailyClicks' not 'clicksPerDay'
+                const dailyData = Array.isArray(data.dailyClicks) ? data.dailyClicks : [];
+                console.log("📊 Setting analytics data:", dailyData);
+                setAnalytics(dailyData);
+            } catch (err) {
+                console.error("Error fetching analytics:", err);
+                setAnalytics([]);  // Silently fail, don't show error
+            }
+        };
+        fetchAnalytics();
     }, []);
 
     // Load URL list on first load
@@ -200,7 +211,15 @@ export default function Dashboard() {
 
             {/* Analytics Section */}
             <h2 className="mt-10 mb-4 text-xl font-semibold">Analytics Overview</h2>
-            <AnalyticsChart data={analytics} />
+            {analytics.length > 0 ? (
+                <AnalyticsChart data={analytics} />
+            ) : (
+                <div className="bg-darkCard p-6 rounded-lg border border-gray-700 text-center">
+                    <p className="text-gray-400 text-sm">
+                        No analytics data yet. Create and share some short URLs to see click trends!
+                    </p>
+                </div>
+            )}
         </div>
     );
 }

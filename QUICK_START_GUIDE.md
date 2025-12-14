@@ -54,7 +54,7 @@ npm run dev
 |------|-------|-----------|---------|
 | **Dashboard** | `/dashboard` | ✅ | Create URLs & view analytics |
 | **MyUrls** | `/my-urls` | ✅ | Manage all URLs (edit/delete) |
-| **Analytics** | `/analytics` | ✅ | Full analytics dashboard |
+| **Analytics** | `/analytics` | ✅ | Full analytics dashboard with real-time metrics |
 | **Login** | `/login` | ❌ | User authentication |
 | **Register** | `/register` | ❌ | New user signup |
 | **Settings** | `/settings` | ✅ | Account & app settings |
@@ -88,10 +88,21 @@ npm run dev
 - `deleteUrl(id)` - Delete URL via `DELETE /urls/delete/{id}`
 - `editUrl(url)` - Update expiry via `POST /urls/update/{id}`
 
-### Analystics.jsx
-- `fetchUrls()` - Get URLs for breakdown
-- `fetchAnalytics()` - Fetch daily click data
-- Computed: `totalClicks`, `topUrl`
+### Analytics.jsx (Real-time Dashboard)
+- `fetchAnalytics()` - Fetch real-time analytics from `/analytics/overview`
+- `fetchUrls()` - Get URLs for breakdown section
+- **Backend Integration:**
+  - Receives device data as: `[["Desktop", 10], ["Mobile", 5], ...]`
+  - Receives referrers as: `[{name: "google", percentage: 45}, ...]`
+  - Transforms to Recharts format with unique composite keys
+- **Features:**
+  - Summary cards: Total Clicks, Total URLs, Top Performing URL
+  - Line chart: Daily clicks trend
+  - Pie chart: Device distribution (Desktop, Mobile, Tablet, Other)
+  - Referrer bars: Top traffic sources with percentages
+  - URL breakdown: Individual URL performance cards
+- **Color mapping:** Desktop (#1DB954), Mobile (#FF6B6B), Tablet (#4ECDC4), Other (#95E1D3)
+- **Key Optimization:** Uses composite keys (`device-Desktop-0`, `referrer-google-0`) to prevent React warnings
 
 ### Login.jsx
 - `submit()` - Authenticate user
@@ -104,6 +115,103 @@ npm run dev
 ### Settings.jsx
 - `handleCopyToken()` - Copy JWT to clipboard
 - `handleLogout()` - Logout with confirmation
+
+---
+
+## 📊 Analytics Dashboard Guide
+
+### What Analytics Tracks
+
+| Metric | Meaning | How Calculated |
+|--------|---------|-----------------|
+| **Total Clicks** | Sum of all clicks | All URLs' clickCount added |
+| **Total URLs** | Number of URLs created | Count of URLs array |
+| **Top Performing URL** | URL with most clicks | URL with highest clickCount |
+| **Daily Clicks** | Clicks per day | Backend provides clicksPerDay data |
+| **Device Distribution** | Traffic by device type | Backend groups clicks by device |
+| **Referrers** | Traffic source (where clicks came from) | Backend tracks referrer sources |
+| **URL Breakdown** | Individual URL click count | Lists each URL's clickCount |
+
+### Analytics Data Flow
+
+```
+Backend: GET /analytics/overview
+    ↓
+Raw Data Format:
+  - devices: [["Desktop", 10], ["Mobile", 5], ...]  ← Array format
+  - referrers: [{name: "google", percentage: 45}, ...]  ← Object format
+    ↓
+React Transformation:
+  - Devices → Convert [[name, count]] to {id, name, value, color}
+  - Referrers → Add composite key {id: "referrer-name-index"}
+    ↓
+Recharts Components:
+  - PieChart renders device distribution
+  - ResponsiveContainer handles sizing (200x200px)
+  - Bars visualize referrer percentages
+```
+
+### Understanding the Visualizations
+
+**Summary Cards (Top Row)**
+- Green numbers = Key metrics
+- Shows snapshot of performance
+- Updated when page loads
+
+**Clicks per Day (Line Chart)**
+- Shows trend over time
+- X-axis = Date
+- Y-axis = Click count
+- Green line = Click trend
+
+**Device Distribution (Pie Chart)**
+- Shows which devices users are on
+- Colors: Desktop (Green), Mobile (Red), Tablet (Cyan), Other (Light Cyan)
+- Larger slice = More traffic from that device
+
+**Top Referrers (Bars)**
+- Shows where traffic comes from
+- Longer bar = More traffic
+- Percentage = % of total clicks from that source
+- "Unknown" = No referrer data
+
+**URL Breakdown (Cards)**
+- Each card = One short URL
+- Shows long URL, short code, and click count
+- Cards show all your URLs' performance
+
+### Backend Data Format
+
+Analytics endpoint returns:
+```javascript
+GET /analytics/overview → {
+  totalClicks: 16,
+  totalUrls: 20,
+  topUrl: { shortCode: "68jcwfr", clickCount: 3 },
+  clicksPerDay: [...],
+  devices: [["Tablet", 2], ["Mobile", 10], ["Desktop", 4]],    // Array format
+  referrers: [
+    {percentage: 13, name: "Tablet"},
+    {percentage: 63, name: "Mobile"},
+    {percentage: 25, name: "Desktop"}
+  ]
+}
+```
+
+### Composite Key Strategy
+
+**Why:** React requires unique keys for lists. When multiple items have the same value, keys would duplicate.
+
+**Solution:** Combine data + index
+```javascript
+// Device key example
+"device-Desktop-0", "device-Mobile-1", "device-Tablet-2"
+
+// Referrer key example
+"referrer-google-0", "referrer-unknown-1", "referrer-facebook-2"
+
+// Ensures uniqueness even with duplicate names
+```
 
 ---
 
@@ -151,11 +259,21 @@ POST /urls/create       { longUrl, expiry: null }
 GET  /urls/all
 DELETE /urls/delete/{id}
 POST /urls/update/{id}  { longUrl, expiry }
+GET  /redirect/{shortCode}  (Redirect to original URL - increments click count)
 ```
 
-### Analytics (Mock)
+### Analytics (Real-time)
 ```
-GET /analytics          (Currently returns mock data)
+GET /analytics/overview
+  Response: {
+    totalClicks: number,
+    totalUrls: number,
+    topUrl: { shortCode, clickCount },
+    clicksPerDay: [{ date, clicks }],
+    devices: [["name", count], ...],
+    referrers: [{ name, percentage }, ...],
+    breakdown: [{ shortCode, clickCount }, ...]
+  }
 ```
 
 ---

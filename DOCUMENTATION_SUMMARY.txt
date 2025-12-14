@@ -33,7 +33,7 @@ I have created **three comprehensive documentation files** with over **2000+ lin
 #### Pages (7 total with complete documentation)
 - **Dashboard** - URL creation & analytics overview (fetchUrls, createUrl methods)
 - **MyUrls** - URL management (loadUrls, deleteUrl, editUrl methods)
-- **Analytics** - Full dashboard (fetchUrls, fetchAnalytics, computed values)
+- **Analytics** - **UPDATED:** Full real-time dashboard with device tracking, referrer analysis, Pie charts (fetchAnalytics, fetchUrls, composite keys, data transformations)
 - **Login** - Authentication (submit method)
 - **Register** - User signup (submit method, validation)
 - **Settings** - Account settings (handleCopyToken, handleLogout)
@@ -96,7 +96,8 @@ I have created **three comprehensive documentation files** with over **2000+ lin
 ```
 ✅ Dashboard.jsx        - fetchUrls(), createUrl(), state, effects
 ✅ MyUrls.jsx          - loadUrls(), deleteUrl(), editUrl(), state
-✅ Analystics.jsx      - fetchUrls(), fetchAnalytics(), computed values
+✅ Analystics.jsx      - **NEW:** fetchAnalytics(), device colors, data transformations, 
+                        composite keys, Recharts Pie chart, real-time backend integration
 ✅ Login.jsx           - submit(), hooks used, navigation
 ✅ Register.jsx        - submit(), validation, hooks used
 ✅ Settings.jsx        - handleCopyToken(), handleLogout()
@@ -141,6 +142,60 @@ I have created **three comprehensive documentation files** with over **2000+ lin
 ✅ Command reference
 ✅ Learning paths
 ```
+
+---
+
+## 📊 New Analytics Features Added (December 14, 2025)
+
+### Real-Time Analytics Dashboard
+**Updates to Analystics.jsx:**
+
+✅ **Backend Integration Fixed**
+- Now fetches real data from `/analytics/overview`
+- Supports device array format: `[["Desktop", 10], ["Mobile", 5], ...]`
+- Supports referrer object format: `[{name: "google", percentage: 45}, ...]`
+- Composite key generation prevents React duplicate key warnings
+
+✅ **Device Distribution Tracking**
+- Desktop: #1DB954 (Green - Primary)
+- Mobile: #FF6B6B (Red)
+- Tablet: #4ECDC4 (Cyan)
+- Other: #95E1D3 (Light Cyan)
+- Donut pie chart visualization (Recharts)
+- Legend showing device names and click counts
+
+✅ **Referrer Analysis**
+- Shows top traffic sources
+- Percentage-based horizontal bars
+- Gradient styling (green to light green)
+- Supports unknown/null referrer sources
+- Composite keys prevent duplicate rendering
+
+✅ **Data Transformation & Key Handling**
+- Device keys: `device-${deviceName}-${index}`
+- Referrer keys: `referrer-${name}-${index}` or `referrer-unknown-${index}`
+- URL keys: Using backend-provided ID (unique)
+- Prevents React console warnings about duplicate keys
+- Handles data duplicates gracefully
+
+✅ **Chart Sizing Fixed**
+- Pie chart container: Fixed 200x200px dimensions
+- ResponsiveContainer receives explicit pixel values
+- Resolves Recharts warning about negative width/height
+
+✅ **Error Handling Improved**
+- API error messages displayed to user
+- Loading state while fetching data
+- Empty state for no URLs created
+- Console logging for debugging
+
+### Documentation Coverage (New)
+- Complete data transformation logic documented
+- Backend response format explained
+- React key props optimization strategy
+- Performance considerations listed
+- Device color mapping documented
+- Error handling patterns shown
 
 ---
 

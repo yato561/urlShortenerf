@@ -92,15 +92,15 @@ Contains:
 
 ### Pages (7 total)
 
-| Page | Location | Route | Methods |
-|------|----------|-------|---------|
-| Dashboard | `src/pages/Dashboard.jsx` | `/dashboard` | fetchUrls, createUrl |
-| MyUrls | `src/pages/MyUrls.jsx` | `/my-urls` | loadUrls, deleteUrl, editUrl |
-| Analytics | `src/pages/Analystics.jsx` | `/analytics` | fetchUrls, fetchAnalytics |
-| Login | `src/pages/Login.jsx` | `/login` | submit (login method) |
-| Register | `src/pages/Register.jsx` | `/register` | submit (register method) |
-| Settings | `src/pages/Settings.jsx` | `/settings` | handleCopyToken, handleLogout |
-| NotFound | `src/pages/NotFound.jsx` | `*` | - |
+| Page | Location | Route | Methods | Features |
+|------|----------|-------|---------|----------|
+| Dashboard | `src/pages/Dashboard.jsx` | `/dashboard` | fetchUrls, createUrl | URL creation, quick analytics |
+| MyUrls | `src/pages/MyUrls.jsx` | `/my-urls` | loadUrls, deleteUrl, editUrl | URL management, CRUD |
+| **Analytics** | `src/pages/Analystics.jsx` | `/analytics` | **fetchAnalytics, fetchUrls** | **Real-time metrics, device tracking, referrer analysis, Pie charts** |
+| Login | `src/pages/Login.jsx` | `/login` | submit (login method) | User authentication |
+| Register | `src/pages/Register.jsx` | `/register` | submit (register method) | New user signup |
+| Settings | `src/pages/Settings.jsx` | `/settings` | handleCopyToken, handleLogout | Account settings, JWT management |
+| NotFound | `src/pages/NotFound.jsx` | `*` | - | 404 error page |
 
 ### Components (7 total)
 
@@ -145,6 +145,17 @@ Contains:
 #### Connect to backend API
 → See **COMPONENT_DOCUMENTATION.md** → "API & Utilities"
 → Shows axiosClient setup and wrapper functions
+
+#### View real-time analytics
+→ See **QUICK_START_GUIDE.md** → "Analytics Dashboard Guide"
+→ Explains all metrics, visualizations, and data flow
+→ See **COMPONENT_DOCUMENTATION.md** → "Analystics.jsx"
+→ Complete backend integration details
+
+#### Understand device tracking & referrers
+→ See **QUICK_START_GUIDE.md** → "Analytics Dashboard Guide"
+→ Data transformations, composite key strategy
+→ See **COMPONENT_DOCUMENTATION.md** → "Analystics.jsx" → "Data Transformation Logic"
 
 #### Understand authentication
 → See **COMPONENT_DOCUMENTATION.md** → "Context & Hooks"

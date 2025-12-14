@@ -12,7 +12,12 @@ A modern, **fully responsive** web application that allows users to create, mana
 ✅ **User Authentication** - Secure registration and login with JWT tokens
 ✅ **URL Shortening** - Convert long URLs into short, memorable links
 ✅ **URL Management** - View, edit, and delete your shortened URLs with copy-to-clipboard
-✅ **Analytics** - Track click counts and URL performance
+✅ **Advanced Analytics** - **NEW:** Real-time analytics dashboard with device tracking and referrer analysis
+  - Summary cards (Total Clicks, Total URLs, Top Performing URL)
+  - Daily click trends (LineChart visualization)
+  - Device distribution (Desktop, Mobile, Tablet, Other - Pie Chart)
+  - Top referrers/traffic sources (Horizontal bars with percentages)
+  - Individual URL click breakdown
 ✅ **Expiry Management** - Set optional expiration dates for URLs
 ✅ **Dashboard** - Centralized view with URL creation and management
 ✅ **Protected Routes** - Secure pages that require authentication
@@ -643,8 +648,40 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 ## Changelog
 
-### Version 3.0.0 (Latest)
-**Major Update - Full Mobile Responsiveness & Bug Fixes**
+### Version 3.0.0 (Latest - Updated December 14, 2025)
+**Major Update - Advanced Analytics & Full Mobile Responsiveness**
+
+**New Features (Dec 14):**
+- ✅ **Real-time Analytics Dashboard** with real backend integration
+  - Device distribution tracking (Desktop, Mobile, Tablet, Other)
+  - Top referrer/traffic source analysis
+  - Daily click trend charts (LineChart)
+  - Pie chart visualization for device breakdown
+  - URL performance click breakdown
+  - Summary cards with key metrics
+- ✅ Device color mapping (Desktop: Green, Mobile: Red, Tablet: Cyan, Other: Light Cyan)
+- ✅ Referrer percentage-based visualization
+- ✅ Data transformation with composite unique keys for React list rendering
+- ✅ Fixed Recharts sizing issues with explicit pixel dimensions
+- ✅ Comprehensive analytics documentation
+- ✅ Data transformation documentation for backend integration
+
+**Backend Integration (Dec 14):**
+- ✅ Supports `/analytics/overview` endpoint
+- ✅ Handles device array format: `[["name", count], ...]`
+- ✅ Handles referrer object format: `[{name, percentage}, ...]`
+- ✅ Proper error handling and fallback values
+- ✅ Loading states and empty state messages
+
+**Documentation Updates (Dec 14):**
+- ✅ Updated COMPONENT_DOCUMENTATION.md with full Analytics page details (400+ lines added)
+- ✅ Updated QUICK_START_GUIDE.md with Analytics guide section
+- ✅ Updated DOCUMENTATION_INDEX.md with Analytics features
+- ✅ Updated DOCUMENTATION_SUMMARY.txt with new features
+- ✅ Updated START_HERE.md with Analytics dashboard guide
+- ✅ Updated README.md with Analytics feature descriptions
+
+**Previous Features (Dec 10):**
 
 **New Features:**
 - ✅ Complete mobile and tablet responsiveness
@@ -668,6 +705,10 @@ MIT License - feel free to use this project for personal or commercial purposes.
 - ✅ Fixed editUrl API payload (now sends both longUrl and expiry correctly)
 - ✅ Fixed sidebar text being hidden by green highlight overlay
 - ✅ Fixed missing dependencies preventing builds
+- ✅ Fixed Analytics Pie chart empty display (data format handling)
+- ✅ Fixed referrer display showing "Unknown" (field name correction)
+- ✅ Fixed React duplicate key warnings in Analytics (composite key strategy)
+- ✅ Fixed Recharts chart sizing warnings (explicit pixel dimensions)
 
 **Testing & Validation:**
 - ✅ Tested on mobile phones (portrait & landscape)
@@ -676,6 +717,9 @@ MIT License - feel free to use this project for personal or commercial purposes.
 - ✅ Verified all responsive breakpoints (sm, md, lg, xl)
 - ✅ Validated touch interactions and mobile menu
 - ✅ Cross-browser testing (Chrome, Firefox, Safari, Edge)
+- ✅ Verified Analytics with real backend data
+- ✅ Tested device distribution visualization
+- ✅ Tested referrer tracking and display
 
 **Development:**
 - Mobile-first design approach
@@ -683,6 +727,8 @@ MIT License - feel free to use this project for personal or commercial purposes.
 - Zero external UI library dependencies
 - Performance optimized for all devices
 - Improved developer experience with clear component structure
+- Recharts integration for advanced visualizations
+- Composite key strategy for React list rendering optimization
 
 ---
 

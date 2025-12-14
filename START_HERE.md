@@ -71,7 +71,7 @@ Practice creating new components/pages
 ```
 ✅ Dashboard       - Create URLs, view analytics
 ✅ MyUrls         - Manage URLs (edit/delete)
-✅ Analytics      - Full analytics dashboard
+✅ Analytics      - **UPDATED:** Real-time dashboard with device tracking & referrer analysis
 ✅ Login          - User authentication
 ✅ Register       - User signup
 ✅ Settings       - Account settings
@@ -292,6 +292,22 @@ Form Input → Validation → API Call → Display Result → Fetch List
 
 ### Mobile Responsiveness
 Mobile (Default) → sm: 640px → md: 768px → lg: 1024px → xl: 1280px
+
+### Real-Time Analytics Dashboard
+Backend Data → Transform with Composite Keys → Recharts Visualization → Device & Referrer Insights
+
+**Analytics Includes:**
+- 📊 **Summary Cards** - Total Clicks, Total URLs, Top Performing URL
+- 📈 **Daily Trend Chart** - Clicks per day (LineChart)
+- 🔵 **Device Distribution** - Desktop, Mobile, Tablet, Other (Pie Chart)
+- 🌐 **Top Referrers** - Traffic sources with percentages (Horizontal bars)
+- 📋 **URL Breakdown** - Individual URL click counts (Card list)
+
+**Data Transformation:**
+- Device data from backend array format `[["Desktop", 10], ...]` → Recharts format
+- Referrer data from object format `[{name, percentage}, ...]` → React-safe format
+- Composite unique keys prevent React duplicate key warnings
+- Color mapping: Desktop (Green), Mobile (Red), Tablet (Cyan), Other (Light Cyan)
 
 ---
 
