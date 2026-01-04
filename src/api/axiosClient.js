@@ -43,7 +43,9 @@ api.interceptors.response.use(
       console.error("   Make sure backend is running on http://localhost:8081");
       console.error("   Backend must allow CORS for http://localhost:5174");
     } else {
-      console.error("Response error:", error.response?.status, error.response?.data);
+      console.error("Response error:", error.response?.status, error.response?.statusText);
+      console.error("   Error body:", error.response?.data);
+      console.error("   Full response:", error.response);
     }
     return Promise.reject(error);
   }

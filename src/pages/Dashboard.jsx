@@ -12,6 +12,7 @@ export default function Dashboard() {
     const [analytics, setAnalytics] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [analyticsError, setAnalyticsError] = useState(false);
 
     // Fetch user's URLs
     const fetchUrls = async () => {
@@ -78,6 +79,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchAnalytics = async () => {
             try {
+                setAnalyticsError(false);
                 const res = await api.get("/analytics/overview");
                 const data = res.data;
                 console.log("📊 Analytics response:", data);
@@ -90,8 +92,10 @@ export default function Dashboard() {
                 console.error("❌ Analytics fetch failed:");
                 console.error("   Status:", err.response?.status);
                 console.error("   Message:", err.response?.data?.message || err.message);
+                console.error("   Response data:", err.response?.data);
                 console.error("   Full error:", err);
-                setAnalytics([]);  // Silently fail, don't show error
+                setAnalyticsError(true);
+                setAnalytics([]);
             }
         };
         fetchAnalytics();
@@ -215,7 +219,12 @@ export default function Dashboard() {
 
             {/* Analytics Section */}
             <h2 className="mt-10 mb-4 text-xl font-semibold">Analytics Overview</h2>
-            {analytics.length > 0 ? (
+            {analyticsError ? (
+                <div className="bg-red-900 bg-opacity-20 border border-red-600 p-6 rounded-lg text-center">
+                    <p className="text-red-400 text-sm font-semibold mb-2">⚠️ Analytics Unavailable</p>
+                    <p className="text-red-300 text-xs">Backend service is currently down. Please check back soon.</p>
+                </div>
+            ) : analytics.length > 0 ? (
                 <AnalyticsChart data={analytics} />
             ) : (
                 <div className="bg-darkCard p-6 rounded-lg border border-gray-700 text-center">
