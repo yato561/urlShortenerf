@@ -37,29 +37,53 @@ export default function Analytics() {
             });
 
             // clicks per day - backend returns 'dailyClicks'
-            setAnalytics(data.dailyClicks || []);
+            const dailyData = data.dailyClicks || [];
+            console.log("Daily clicks data:", dailyData);
+            setAnalytics(dailyData);
 
-            // devices - ensure unique IDs (format: [[name, count], [name, count], ...])
-            setTopDevices(
-                (data.devices || []).map((d, idx) => {
-                    const [deviceName, count] = Array.isArray(d) ? d : [d, 0];
+            // devices - handle both raw and formatted formats
+            let deviceData = [];
+            if (data.devices && Array.isArray(data.devices)) {
+                deviceData = data.devices.map((d, idx) => {
+                    let name, value;
+                    
+                    // Handle if devices is formatted like {name, percentage}
+                    if (d.name !== undefined) {
+                        name = d.name;
+                        value = d.percentage || 0;
+                    }
+                    // Handle if devices is raw [["Desktop", 100], ...]
+                    else if (Array.isArray(d)) {
+                        [name, value] = d;
+                    }
+                    // Fallback
+                    else {
+                        name = String(d);
+                        value = 0;
+                    }
+                    
                     return {
-                        id: `device-${deviceName}-${idx}`,  // Composite unique key
-                        name: deviceName,
-                        value: count,
-                        color: deviceColors[deviceName] || "#1DB954"
+                        id: `device-${name}-${idx}`,
+                        name: name || "Unknown",
+                        value: value || 0,
+                        color: deviceColors[name] || "#1DB954"
                     };
-                })
-            );
+                });
+            }
+            console.log("Processed devices:", deviceData);
+            setTopDevices(deviceData);
 
             // referrers - ensure unique IDs (format: [{name, percentage}, ...])
-            setTopReferrers(
-                (data.referrers || []).map((r, idx) => ({
-                    id: r.name ? `referrer-${r.name}-${idx}` : `referrer-unknown-${idx}`,  // Composite unique key
+            let referrerData = [];
+            if (data.referrers && Array.isArray(data.referrers)) {
+                referrerData = data.referrers.map((r, idx) => ({
+                    id: r.name ? `referrer-${r.name}-${idx}` : `referrer-unknown-${idx}`,
                     name: r.name || "Unknown",
                     percentage: r.percentage || 0
-                }))
-            );
+                }));
+            }
+            console.log("Processed referrers:", referrerData);
+            setTopReferrers(referrerData);
 
             console.log("✓ Analytics loaded");
         } catch (err) {
@@ -147,65 +171,73 @@ export default function Analytics() {
                         <div className="bg-darkCard p-6 rounded-lg border border-gray-700">
                             <h2 className="text-xl font-semibold mb-6">Top Devices</h2>
                             
-                            <div className="flex items-center justify-between gap-6">
+                            {topDevices.length === 0 ? (
+                                <p className="text-gray-400 text-sm">No device data available</p>
+                            ) : (
+                                <div className="flex items-center justify-between gap-6">
 
-                                {/* Pie Chart */}
-                                <div style={{ width: 200, height: 200 }}>
-                                    <ResponsiveContainer width={200} height={200}>
-                                        <PieChart>
-                                            <Pie
-                                                data={topDevices}
-                                                innerRadius={50}
-                                                outerRadius={70}
-                                                dataKey="value"
-                                                startAngle={90}
-                                                endAngle={450}
-                                            >
-                                                {topDevices.map((entry) => (
-                                                    <Cell key={entry.id} fill={entry.color} />
-                                                ))}
-                                            </Pie>
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                </div>
+                                    {/* Pie Chart */}
+                                    <div style={{ width: 200, height: 200 }}>
+                                        <ResponsiveContainer width={200} height={200}>
+                                            <PieChart>
+                                                <Pie
+                                                    data={topDevices}
+                                                    innerRadius={50}
+                                                    outerRadius={70}
+                                                    dataKey="value"
+                                                    startAngle={90}
+                                                    endAngle={450}
+                                                >
+                                                    {topDevices.map((entry) => (
+                                                        <Cell key={entry.id} fill={entry.color} />
+                                                    ))}
+                                                </Pie>
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
 
-                                {/* Legend */}
-                                <div className="space-y-3">
-                                    {topDevices.map((device) => (
-                                        <div key={device.id} className="flex items-center gap-2">
-                                            <div
-                                                className="w-3 h-3 rounded-full"
-                                                style={{ backgroundColor: device.color }}
-                                            ></div>
-                                            <span className="text-gray-300">{device.name}</span>
-                                            <span className="text-primary font-semibold ml-2">{device.value}</span>
-                                        </div>
-                                    ))}
+                                    {/* Legend */}
+                                    <div className="space-y-3">
+                                        {topDevices.map((device) => (
+                                            <div key={device.id} className="flex items-center gap-2">
+                                                <div
+                                                    className="w-3 h-3 rounded-full"
+                                                    style={{ backgroundColor: device.color }}
+                                                ></div>
+                                                <span className="text-gray-300">{device.name}</span>
+                                                <span className="text-primary font-semibold ml-2">{device.value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         {/* Referrers */}
                         <div className="bg-darkCard p-6 rounded-lg border border-gray-700">
                             <h2 className="text-xl font-semibold mb-6">Top Referrers</h2>
                             
-                            <div className="space-y-4">
-                                {topReferrers.map((ref) => (
-                                    <div key={ref.id} className="space-y-2">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-300">{ref.name}</span>
-                                            <span className="text-primary font-semibold">{ref.percentage}</span>
-                                        </div>
+                            {topReferrers.length === 0 ? (
+                                <p className="text-gray-400 text-sm">No referrer data available</p>
+                            ) : (
+                                <div className="space-y-4">
+                                    {topReferrers.map((ref) => (
+                                        <div key={ref.id} className="space-y-2">
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-gray-300">{ref.name}</span>
+                                                <span className="text-primary font-semibold">{ref.percentage}</span>
+                                            </div>
 
-                                        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full bg-gradient-to-r from-primary to-green-500"
-                                                style={{ width: `${ref.percentage}%` }}
-                                            ></div>
+                                            <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-gradient-to-r from-primary to-green-500"
+                                                    style={{ width: `${ref.percentage}%` }}
+                                                ></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
