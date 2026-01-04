@@ -36,8 +36,8 @@ export default function Analytics() {
                 topUrl: data.topUrl
             });
 
-            // clicks per day
-            setAnalytics(data.clicksPerDay || []);
+            // clicks per day - backend returns 'dailyClicks'
+            setAnalytics(data.dailyClicks || []);
 
             // devices - ensure unique IDs (format: [[name, count], [name, count], ...])
             setTopDevices(
