@@ -87,7 +87,10 @@ export default function Dashboard() {
                 console.log("📊 Setting analytics data:", dailyData);
                 setAnalytics(dailyData);
             } catch (err) {
-                console.error("Error fetching analytics:", err);
+                console.error("❌ Analytics fetch failed:");
+                console.error("   Status:", err.response?.status);
+                console.error("   Message:", err.response?.data?.message || err.message);
+                console.error("   Full error:", err);
                 setAnalytics([]);  // Silently fail, don't show error
             }
         };

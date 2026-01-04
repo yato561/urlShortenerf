@@ -19,6 +19,9 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       console.log("✓ Token attached to request"); // Debug log
+      console.log("   Token (first 20 chars):", token.substring(0, 20) + "...");
+    } else {
+      console.warn("⚠️ No token found in localStorage - request will be unauthorized");
     }
     return config;
   },
