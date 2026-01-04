@@ -7,7 +7,9 @@ function UrlCard({ url, onDelete, onEdit }) {
 
   const handleCopy = async () => {
     try {
-      const shortUrl = `${globalThis.location.origin}/${url.shortCode}`;
+      // Use backend API URL for the redirect endpoint, not frontend URL
+      const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8081";
+      const shortUrl = `${backendUrl}/s/${url.shortCode}`;
       await navigator.clipboard.writeText(shortUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

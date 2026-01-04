@@ -164,8 +164,9 @@ export default function Dashboard() {
                                     alert("Short code not available");
                                     return;
                                 }
-                                // Use backend URL for the redirect endpoint
-                                const fullShortUrl = `http://localhost:8081/s/${createdUrl.shortCode}`;
+                                // Use backend API URL for the redirect endpoint
+                                const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8081";
+                                const fullShortUrl = `${backendUrl}/s/${createdUrl.shortCode}`;
                                 navigator.clipboard.writeText(fullShortUrl).then(() => {
                                     alert(`✓ Copied to clipboard!\n${fullShortUrl}`);
                                 }).catch(() => {
